@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Festőrács - Zsolt Paint</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+    #grid { display: grid; gap: 1px; background: black; margin-top: 20px; }
+    .cell { width: 20px; height: 20px; background: white; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<h2>🎨 Rácsfestő Zsoltnak</h2>
+
+<label>Rács mérete: <input type="number" id="size" value="16" min="4" max="128"></label>
+<label>Szín: <input type="color" id="color" value="#ff69b4"></label>
+<button onclick="generateGrid()">Új rács</button>
+<button onclick="resetGrid()">Alaphelyzet</button>
+
+<div id="grid"></div>
+
+<script>
+  function generateGrid() {
+    const grid = document.getElementById("grid");
+    const size = parseInt(document.getElementById("size").value);
+    grid.innerHTML = "";
+    grid.style.gridTemplateColumns = `repeat(${size}, 20px)`;
+    for (let i = 0; i < size * size; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.addEventListener("click", () => {
+        cell.style.background = document.getElementById("color").value;
+      });
+      grid.appendChild(cell);
+    }
+  }
+
+  function resetGrid() {
+    document.querySelectorAll(".cell").forEach(cell => {
+      cell.style.background = "white";
+    });
+  }
+
+  generateGrid(); // automatikus indulás
+</script>
+
+</body>
+</html>
