@@ -79,13 +79,13 @@
     brush.color = colorInput.value;
   });
 
-  // Radír gomb → fehérre állítja az ecsetet
+  // Radír gomb → fehér ecset
   radirBtn.addEventListener("click", () => {
     brush.color = "#ffffff";
     colorInput.value = "#ffffff";
   });
 
-  // Újra gomb → törli az összes cella színét
+  // Újra gomb → rács törlése
   ujraBtn.addEventListener("click", () => {
     document.querySelectorAll(".cell").forEach(cell => {
       cell.style.backgroundColor = "#ffffff";
@@ -93,7 +93,7 @@
     localStorage.removeItem("festvetervez");
   });
 
-  // Mentés gomb → menti a cellák színét
+  // Mentés gomb → elmentett színezés
   mentesBtn.addEventListener("click", () => {
     const colors = Array.from(document.querySelectorAll(".cell"))
       .map(cell => cell.style.backgroundColor);
@@ -107,13 +107,19 @@
     cell.className = "cell";
     cell.addEventListener("click", () => {
       const cellColor = rgbToHex(cell.style.backgroundColor);
+
       if (brush.color.toLowerCase() !== "#ffffff") {
-        cell.style.backgroundColor = brush.color;
-        if (cellColor && cellColor.toLowerCase() !== "#ffffff") {
+        // Festés csak fehér cellára
+        if (cellColor.toLowerCase() === "#ffffff") {
+          cell.style.backgroundColor = brush.color;
+        }
+        // Színátvétel más színű celláról (de nem festés)
+        else {
           brush.color = cellColor;
           colorInput.value = cellColor;
         }
       } else {
+        // Radír mindig töröl (vissza fehérre)
         cell.style.backgroundColor = "#ffffff";
       }
     });
