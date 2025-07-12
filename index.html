@@ -53,6 +53,7 @@
   <label for="color">Ecset:</label>
   <input type="color" id="color" value="#ff69b4">
   <button id="radir">Radír</button>
+  <button id="pipet">Pipet</button>
   <button id="ujra">Újra</button>
   <button id="mentes">Mentés</button>
 </div>
@@ -63,18 +64,26 @@
   const grid = document.getElementById("grid");
   const colorInput = document.getElementById("color");
   const radirBtn = document.getElementById("radir");
+  const pipetBtn = document.getElementById("pipet");
   const ujraBtn = document.getElementById("ujra");
   const mentesBtn = document.getElementById("mentes");
   const brush = { color: colorInput.value };
+  let pipetMode = false;
   const gridSize = 45;
 
   colorInput.addEventListener("input", () => {
     brush.color = colorInput.value;
+    pipetMode = false;
   });
 
   radirBtn.addEventListener("click", () => {
     brush.color = "#ffffff";
     colorInput.value = "#ffffff";
+    pipetMode = false;
+  });
+
+  pipetBtn.addEventListener("click", () => {
+    pipetMode = true;
   });
 
   ujraBtn.addEventListener("click", () => {
@@ -82,6 +91,7 @@
       cell.style.backgroundColor = "#ffffff";
     });
     localStorage.removeItem("festvetervez");
+    pipetMode = false;
   });
 
   mentesBtn.addEventListener("click", () => {
@@ -89,6 +99,7 @@
       .map(cell => cell.style.backgroundColor);
     localStorage.setItem("festvetervez", JSON.stringify(colors));
     alert("✅ Mentve!");
+    pipetMode = false;
   });
 
   for (let i = 0; i < gridSize * gridSize; i++) {
@@ -97,16 +108,18 @@
     cell.addEventListener("click", () => {
       const cellColor = rgbToHex(cell.style.backgroundColor);
 
-      if (brush.color.toLowerCase() === "#ffffff") {
-        // Radír: minden színt töröl
-        cell.style.backgroundColor = "#ffffff";
+      if (pipetMode) {
+        // Pipet: csak színt vesz fel, nem fest
+        brush.color = cellColor;
+        colorInput.value = cellColor;
+        pipetMode = false;
       } else {
-        // Ecset: csak színes cellákat fest át (nem fehéret)
-        if (cellColor.toLowerCase() !== "#ffffff") {
-          cell.style.backgroundColor = brush.color;
+        // Radír: mindenre hat
+        if (brush.color.toLowerCase() === "#ffffff") {
+          cell.style.backgroundColor = "#ffffff";
         } else {
-          // Ha cella fehér, csak színátvétel, de nem fest
-          brush.color = brush.color; // semmit nem csinál festésként
+          // Ecset: bármit átfest
+          cell.style.backgroundColor = brush.color;
         }
       }
     });
