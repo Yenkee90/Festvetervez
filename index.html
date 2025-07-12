@@ -39,6 +39,19 @@
       font-weight: bold;
       margin-right: 10px;
     }
+
+    #radirBtn {
+      margin-left: 10px;
+      padding: 4px 8px;
+      background: white;
+      border: 1px solid #aaa;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #radirBtn:hover {
+      background: #eee;
+    }
   </style>
 </head>
 <body>
@@ -48,6 +61,7 @@
 <div id="toolbar">
   <label>Ecset:</label>
   <input type="color" id="color" value="#ff69b4">
+  <button id="radirBtn">Radír</button>
 </div>
 
 <div id="grid"></div>
@@ -55,11 +69,18 @@
 <script>
   const grid = document.getElementById("grid");
   const colorPicker = document.getElementById("color");
+  const radirBtn = document.getElementById("radirBtn");
   const brush = { color: colorPicker.value };
 
   // Ecset szín frissítése a színválasztóból
   colorPicker.addEventListener("input", () => {
     brush.color = colorPicker.value;
+  });
+
+  // Radír gomb kattintása: fehér szín beállítása
+  radirBtn.addEventListener("click", () => {
+    brush.color = "#ffffff";
+    colorPicker.value = "#ffffff";
   });
 
   // 45x45 rács létrehozása
@@ -69,15 +90,18 @@
     cell.addEventListener("click", () => {
       const currentColor = rgbToHex(cell.style.backgroundColor);
 
-      // Ha az ecset fehér, csak festés történik
+      // Ha ecset nem fehér → festés + színátvétel ha a cella nem fehér
       if (brush.color.toLowerCase() !== "#ffffff") {
         cell.style.backgroundColor = brush.color;
-      }
 
-      // Ha a cella nem fehér, vegyük át a színét
-      if (currentColor && currentColor.toLowerCase() !== "#ffffff") {
-        brush.color = currentColor;
-        colorPicker.value = currentColor;
+        if (currentColor && currentColor.toLowerCase() !== "#ffffff") {
+          brush.color = currentColor;
+          colorPicker.value = currentColor;
+        }
+      }
+      // Ha ecset fehér → radírozás
+      else {
+        cell.style.backgroundColor = "#ffffff";
       }
     });
     grid.appendChild(cell);
