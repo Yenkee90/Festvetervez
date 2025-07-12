@@ -9,19 +9,16 @@
       padding: 20px;
       background: #f4f4f4;
     }
-
     h2 {
       font-size: 28px;
       margin-bottom: 5px;
     }
-
     #controls {
       margin-bottom: 15px;
       display: flex;
       gap: 10px;
       align-items: center;
     }
-
     #grid {
       display: grid;
       grid-template-columns: repeat(45, 20px);
@@ -29,20 +26,17 @@
       background: black;
       width: fit-content;
     }
-
     .cell {
       width: 20px;
       height: 20px;
       background: white;
       cursor: pointer;
     }
-
     button {
       padding: 5px 10px;
       font-weight: bold;
       cursor: pointer;
     }
-
     input[type="color"] {
       width: 40px;
       height: 30px;
@@ -74,7 +68,6 @@
   const brush = { color: colorInput.value };
   const gridSize = 45;
 
-  // Frissítjük az ecset színét
   colorInput.addEventListener("input", () => {
     brush.color = colorInput.value;
   });
@@ -104,18 +97,17 @@
     cell.addEventListener("click", () => {
       const cellColor = rgbToHex(cell.style.backgroundColor);
 
-      if (brush.color.toLowerCase() !== "#ffffff") {
-        // Festés csak fehér cellára
-        if (isFeher(cellColor)) {
+      if (brush.color.toLowerCase() === "#ffffff") {
+        // Radír: minden színt töröl
+        cell.style.backgroundColor = "#ffffff";
+      } else {
+        // Ecset: csak színes cellákat fest át (nem fehéret)
+        if (cellColor.toLowerCase() !== "#ffffff") {
           cell.style.backgroundColor = brush.color;
         } else {
-          // Színátvétel más színű celláról
-          brush.color = cellColor;
-          colorInput.value = cellColor;
+          // Ha cella fehér, csak színátvétel, de nem fest
+          brush.color = brush.color; // semmit nem csinál festésként
         }
-      } else {
-        // Radír: fehérre állítja
-        cell.style.backgroundColor = "#ffffff";
       }
     });
     grid.appendChild(cell);
@@ -138,10 +130,6 @@
     return "#" + result.slice(0, 3)
       .map(x => ("0" + parseInt(x).toString(16)).slice(-2))
       .join("");
-  }
-
-  function isFeher(hex) {
-    return hex.toLowerCase() === "#ffffff";
   }
 </script>
 
