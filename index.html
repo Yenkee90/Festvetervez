@@ -74,18 +74,16 @@
   const brush = { color: colorInput.value };
   const gridSize = 45;
 
-  // Ecset szín frissítése
+  // Frissítjük az ecset színét
   colorInput.addEventListener("input", () => {
     brush.color = colorInput.value;
   });
 
-  // Radír gomb → fehér ecset
   radirBtn.addEventListener("click", () => {
     brush.color = "#ffffff";
     colorInput.value = "#ffffff";
   });
 
-  // Újra gomb → rács törlése
   ujraBtn.addEventListener("click", () => {
     document.querySelectorAll(".cell").forEach(cell => {
       cell.style.backgroundColor = "#ffffff";
@@ -93,7 +91,6 @@
     localStorage.removeItem("festvetervez");
   });
 
-  // Mentés gomb → elmentett színezés
   mentesBtn.addEventListener("click", () => {
     const colors = Array.from(document.querySelectorAll(".cell"))
       .map(cell => cell.style.backgroundColor);
@@ -101,7 +98,6 @@
     alert("✅ Mentve!");
   });
 
-  // Rács létrehozása + eseménykezelés
   for (let i = 0; i < gridSize * gridSize; i++) {
     const cell = document.createElement("div");
     cell.className = "cell";
@@ -110,23 +106,21 @@
 
       if (brush.color.toLowerCase() !== "#ffffff") {
         // Festés csak fehér cellára
-        if (cellColor.toLowerCase() === "#ffffff") {
+        if (isFeher(cellColor)) {
           cell.style.backgroundColor = brush.color;
-        }
-        // Színátvétel más színű celláról (de nem festés)
-        else {
+        } else {
+          // Színátvétel más színű celláról
           brush.color = cellColor;
           colorInput.value = cellColor;
         }
       } else {
-        // Radír mindig töröl (vissza fehérre)
+        // Radír: fehérre állítja
         cell.style.backgroundColor = "#ffffff";
       }
     });
     grid.appendChild(cell);
   }
 
-  // Betöltés mentett színekből
   window.addEventListener("load", () => {
     const saved = localStorage.getItem("festvetervez");
     if (saved) {
@@ -137,14 +131,17 @@
     }
   });
 
-  // RGB → HEX átalakítás helper
   function rgbToHex(rgb) {
-    if (!rgb) return null;
+    if (!rgb) return "#ffffff";
     const result = rgb.match(/\d+/g);
-    if (!result || result.length < 3) return null;
+    if (!result || result.length < 3) return "#ffffff";
     return "#" + result.slice(0, 3)
       .map(x => ("0" + parseInt(x).toString(16)).slice(-2))
       .join("");
+  }
+
+  function isFeher(hex) {
+    return hex.toLowerCase() === "#ffffff";
   }
 </script>
 
