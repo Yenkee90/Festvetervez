@@ -2,47 +2,96 @@
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
-  <title>Festőrács - Zsolt Paint</title>
+  <title>Festvetervez</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
-    #grid { display: grid; gap: 1px; background: black; margin-top: 20px; }
-    .cell { width: 20px; height: 20px; background: white; cursor: pointer; }
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(45, 20px);
+      gap: 1px;
+      background: black;
+      width: fit-content;
+      margin-top: 20px;
+    }
+
+    .cell {
+      width: 20px;
+      height: 20px;
+      background: white;
+      cursor: pointer;
+    }
+
+    #toolbar {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
 
-<h2>🎨 Rácsfestő Zsoltnak</h2>
+<h2>🎨 Festvetervez</h2>
 
-<label>Rács mérete: <input type="number" id="size" value="16" min="4" max="128"></label>
-<label>Szín: <input type="color" id="color" value="#ff69b4"></label>
-<button onclick="generateGrid()">Új rács</button>
-<button onclick="resetGrid()">Alaphelyzet</button>
+<div id="toolbar">
+  <label>Ecset:</label>
+  <input type="color" id="color" value="#ff69b4">
+</div>
 
 <div id="grid"></div>
 
 <script>
-  function generateGrid() {
-    const grid = document.getElementById("grid");
-    const size = parseInt(document.getElementById("size").value);
-    grid.innerHTML = "";
-    grid.style.gridTemplateColumns = `repeat(${size}, 20px)`;
-    for (let i = 0; i < size * size; i++) {
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      cell.addEventListener("click", () => {
-        cell.style.background = document.getElementById("color").value;
-      });
-      grid.appendChild(cell);
-    }
-  }
+  const grid = document.getElementById("grid");
+  const colorPicker = document.getElementById("color");
+  const brush = { color: colorPicker.value };
 
-  function resetGrid() {
-    document.querySelectorAll(".cell").forEach(cell => {
-      cell.style.background = "white";
+  // Ecset szín frissítése a színválasztóból
+  colorPicker.addEventListener("input", () => {
+    brush.color = colorPicker.value;
+  });
+
+  // 45x45 rács létrehozása
+  for (let i = 0; i < 45 * 45; i++) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    cell.addEventListener("click", () => {
+      const currentColor = rgbToHex(cell.style.backgroundColor);
+
+      // Ha az ecset fehér, csak festés történik
+      if (brush.color.toLowerCase() !== "#ffffff") {
+        cell.style.backgroundColor = brush.color;
+      }
+
+      // Ha a cella nem fehér, vegyük át a színét
+      if (currentColor && currentColor.toLowerCase() !== "#ffffff") {
+        brush.color = currentColor;
+        colorPicker.value = currentColor;
+      }
     });
+    grid.appendChild(cell);
   }
 
-  generateGrid(); // automatikus indulás
+  // RGB → HEX átalakítás helper
+  function rgbToHex(rgb) {
+    if (!rgb) return null;
+    const result = rgb.match(/\d+/g);
+    if (!result || result.length < 3) return null;
+    return "#" + result.slice(0, 3)
+      .map(x => ("0" + parseInt(x).toString(16)).slice(-2))
+      .join("");
+  }
 </script>
 
 </body>
